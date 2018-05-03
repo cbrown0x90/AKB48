@@ -13,9 +13,10 @@ class AKB48Game extends React.Component {
     super(props);
 
     this.selectCard = this.selectCard.bind(this);
-    this.selected = null;
+    this.moveCard = this.moveCard.bind(this);
 
     this.state = {
+      selected: null,
       deck: [],
       stage: [null, null, null, null, null],
       event: null,
@@ -24,23 +25,24 @@ class AKB48Game extends React.Component {
   }
 
   selectCard(e) {
-    if (this.selected == e) {
-      this.selected = null;
+    if (this.state.selected == e) {
+      this.setState({selected: null})
     } else {
-      this.selected = e;
+      this.setState({selected: e})
     }
   }
 
   moveCard(e) {
-    if (this.selected != null) {
+    if (this.state.selected != null) {
       this.setState(function(prevState, props) {
         //TODO make copies
-        prevState.stage[e] = this.state.hand[this.selected];
-        prevState.hand.splice(this.selected, 1);
-        this.selected = null;
+        prevState.stage[e] = this.state.hand[this.state.selected];
+        prevState.hand.splice(this.state.selected, 1);
+          this.state.selected = null;
         return {
           stage: prevState.stage,
-          hand: prevState.hand
+          hand: prevState.hand,
+          selected: null
         }
       });
     } else {
@@ -88,11 +90,3 @@ class AKB48Game extends React.Component {
     );
   }
 }
-
-/*
-  <div className="row no-gutters">
-    <div className="col-auto">
-      <Place filler="Outside Area" />
-    </div>
-  </div>
- */
