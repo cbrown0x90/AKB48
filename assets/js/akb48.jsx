@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Button } from 'reactstrap';
 
-import { Place, Card } from './card.jsx';
+import { Place, Card, Backup } from './card.jsx';
 
 export default function game_init(root) {
   ReactDOM.render(<AKB48Game />, root);
@@ -14,13 +14,17 @@ class AKB48Game extends React.Component {
 
     this.selectCard = this.selectCard.bind(this);
     this.moveCard = this.moveCard.bind(this);
+    this.moveToBackup = this.moveToBackup.bind(this);
 
     this.state = {
       selected: null,
       deck: [],
       stage: [null, null, null, null, null],
       event: null,
-      hand: ["test1", "test2", "test3", "test4", "test5"]
+      hand: ["test1", "test2", "test3", "test4", "test5"],
+      backup_blue: [],
+      backup_red: [],
+      backup_green: []
     };
   }
 
@@ -38,7 +42,6 @@ class AKB48Game extends React.Component {
         //TODO make copies
         prevState.stage[e] = this.state.hand[this.state.selected];
         prevState.hand.splice(this.state.selected, 1);
-          this.state.selected = null;
         return {
           stage: prevState.stage,
           hand: prevState.hand,
@@ -47,6 +50,19 @@ class AKB48Game extends React.Component {
       });
     } else {
       console.log("hie...");
+    }
+  }
+
+  moveToBackup(e) {
+    if (this.state.selected != null) {
+      this.setState(function(prevState, props) {
+        var newState = {}
+        newState[e] = [...prevState[e], this.state.hand[this.state.selected]];
+        newState.selected = null;
+        prevState.hand.splice(this.state.selected, 1);
+        newState.hand = prevState.hand;
+        return newState;
+      });
     }
   }
 
@@ -70,14 +86,14 @@ class AKB48Game extends React.Component {
           <div className="col-auto mr-3" style={{marginLeft: -50}}>
             <Place width={175} height={125} filler="Event Area" />
           </div>
-          <div className="col-auto mr-3">
-            <Place filler="" />
+          <div onClick={() => this.moveToBackup("backup_red")} className="col-auto mr-3">
+            <Backup backup={this.state.backup_red} color="#FF0000"/>
           </div>
-          <div className="col-auto mr-3">
-            <Place filler="" />
+          <div onClick={() => this.moveToBackup("backup_green")} className="col-auto mr-3">
+            <Backup backup={this.state.backup_green} color="#00FF00"/>
           </div>
-          <div className="col-auto mr-3">
-            <Place filler="" />
+          <div onClick={() => this.moveToBackup("backup_blue")} className="col-auto mr-3">
+            <Backup backup={this.state.backup_blue} color="#0000FF"/>
           </div>
           <div className="col-auto">
             <Place filler="Deck Area" />
